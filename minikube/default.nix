@@ -1,5 +1,5 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, fetchurl, go-bindata, kubernetes, libvirt, qemu, docker-machine-kvm,
-  gpgme, makeWrapper, hostPlatform, vmnet }:
+{ stdenv, callPackage, buildGoPackage, fetchFromGitHub, fetchurl, go-bindata, kubernetes, libvirt, qemu, docker-machine-kvm,
+  gpgme, makeWrapper, hostPlatform, vmnet, localkube-version ? "1.9.0" }:
 
 let
   binPath = [ kubernetes ]
@@ -15,11 +15,16 @@ let
   # instead, we download localkube ourselves and shove it into the minikube binary. The versions URL that minikube uses is
   # currently https://storage.googleapis.com/minikube/k8s_releases.json
 
-  localkube-version = "1.9.0";
-  localkube-binary = fetchurl {
-    url = "https://storage.googleapis.com/minikube/k8sReleases/v${localkube-version}/localkube-linux-amd64";
-    sha256 = "1z5c061mx2flg6hq05d00bvkn722gxv8y9rfpjyk23nk697k31fh";
+  localkube-versions = {
+    "1.9.0" = "1z5c061mx2flg6hq05d00bvkn722gxv8y9rfpjyk23nk697k31fh";
+    "1.7.5" = "1kn4lwnn961r19hqnkgr13np80zqk2fhp8xkhrvxzq6v6shk7gfz";
   };
+
+  localkube-binary = fetchurl {
+      url = "https://storage.googleapis.com/minikube/k8sReleases/v${localkube-version}/localkube-linux-amd64";
+      sha256 = localkube-versions.${localkube-version};
+   };
+
 in buildGoPackage rec {
   pname   = "minikube";
   name    = "${pname}-${version}";
@@ -75,7 +80,7 @@ in buildGoPackage rec {
     homepage    = https://github.com/kubernetes/minikube;
     description = "A tool that makes it easy to run Kubernetes locally";
     license     = licenses.asl20;
-    maintainers = with maintainers; [ ebzzry copumpkin ];
+    maintainers = with maintainers; [ ebzzry copumpkin moretea];
     platforms   = with platforms; unix;
   };
 }
