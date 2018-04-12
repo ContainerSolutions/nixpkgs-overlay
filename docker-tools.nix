@@ -126,7 +126,7 @@ let
         cp ${manifest_json} $out/manifest.json
     '';
 in {
-  inherit drv2ocidir dir2tar;
+  inherit drv2oci-dir dir2tar;
 
   examples = rec {
     hello-dir = drv2oci-dir self.pkgs.hello { config.Cmd = ["${self.pkgs.hello}/bin/hello"]; };
