@@ -14,5 +14,9 @@ self: super: {
       localkube-version = "1.7.5";
       inherit (self.darwin.apple_sdk.frameworks) vmnet;
     };
+
+    google-cloud-sdk = super.callPackage ./google-cloud-sdk {
+      inherit self;
+    };
   };
 }
