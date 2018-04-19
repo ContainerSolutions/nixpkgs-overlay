@@ -15,8 +15,13 @@ self: super: {
       inherit (self.darwin.apple_sdk.frameworks) vmnet;
     };
 
-    google-cloud-sdk = super.callPackage ./google-cloud-sdk {
-      inherit self;
+    google-cloud-sdk = super.callPackage ./google-cloud-sdk/google-cloud-sdk.nix {
+      # inherit (self);
+      inherit (self.python27Packages)
+        cffi
+        cryptography
+        pyopenssl
+        crcmod;
     };
   };
 }
